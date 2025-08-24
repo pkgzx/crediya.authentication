@@ -32,11 +32,6 @@ public class PermissionPostgresPersistenceAdapter implements IPermissionReposito
   }
 
   @Override
-  public Mono<Permission> findById(Long id) {
-    return null;
-  }
-
-  @Override
   public Mono<Boolean> findByResourceAndAction(String resource, String action) {
      return repository.findByResourceAndAction(resource, action)
       .map(permissionEntity -> true)

@@ -11,7 +11,5 @@ public interface IPermissionRepository {
 
     Flux<Permission> findAll();
 
-    Mono<Permission> findById(Long id);
-
     Mono<Boolean> findByResourceAndAction(String resource, String action);
 }

@@ -24,10 +24,6 @@ public class PermissionUseCase implements IPermissionServicePort {
           .then(permissionRepository.save(permission));
     }
 
-    public Mono<Permission> getPermissionById(Long id) {
-        return permissionRepository.findById(id);
-    }
-
     public Flux<Permission> getAllPermissions() {
         return permissionRepository.findAll();
     }

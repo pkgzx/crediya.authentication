@@ -11,15 +11,15 @@ spring:
       path: "/h2"
   profiles:
     include: null
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: "https://idp.example.com/issuer"
-          client-id: "myclientid"
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: "https://idp.example.com/issuer"
+#          client-id: "myclientid"
   sql:
     init:
-      enabled: false
+      mode: never
 jwt:
   json-exp-roles: "/roles"
 management:
@@ -33,6 +33,13 @@ management:
         enabled: true
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
+
+logging:
+  file:
+    name: logs/app.log
+  level:
+    root: INFO
+    com.crediya.authentication: TRACE
 
 routes:
   paths:
