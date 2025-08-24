@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS "Permission" (
+    id BIGSERIAL PRIMARY KEY,
+    resource VARCHAR(50) NOT NULL,
+    action VARCHAR(50) NOT NULL
+);
