@@ -5,6 +5,8 @@ import com.creadiya.authentication.api.dto.ErrorDto;
 import com.creadiya.authentication.api.mapper.IPermissionMapper;
 import com.creadiya.authentication.api.util.ErrorBuilder;
 import com.creadiya.authentication.model.permission.Permission;
+import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
+import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;
 import com.creadiya.authentication.usecase.permission.api.IPermissionServicePort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -26,14 +29,27 @@ public class PermissionHandler {
 
   public Mono<ServerResponse> listenCreatePermission(ServerRequest serverRequest) {
     return serverRequest.bodyToMono(CreatePermissionDto.class)
-      .switchIfEmpty(Mono.error(new RuntimeException("Song body not found")))
+      .switchIfEmpty(Mono.error(new BusinessException(TechnicalMessage.REQUEST_BODY_EMPTY)))
       .map(permissionMapper::toModel)
       .flatMap(permissionServicePort::savePermission)
       .doOnSuccess(franchise -> log.info("Franchise registered successfully"))
       .flatMap(savedPermission -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.just(savedPermission), Permission.class))
-      .onErrorResume(IllegalArgumentException.class, ex -> ErrorBuilder.<Permission>buildErrorResponse(HttpStatus.BAD_REQUEST,
-        List.of(ErrorDto.builder().message(ex.getMessage()).build())));
+      .onErrorResume(BusinessException.class,
+        ex -> ErrorBuilder.<Permission>buildErrorResponse(HttpStatus.resolve(ex.getTechnicalMessage().getCode()),
+        List.of(ErrorDto.builder().message(ex.getMessage()).build())))
+        .onErrorResume(ex -> {
+      log.error("Unexpected error occurred", ex);
+      return ErrorBuilder.<Permission>buildErrorResponse(
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        List.of(ErrorDto.builder()
+          .code(TechnicalMessage.INTERNAL_ERROR.getCode())
+          .message(TechnicalMessage.INTERNAL_ERROR.getMessage())
+          .build()));
+    });
+  }
 
+  public Flux<Permission> getAllPermissions() {
+    return permissionServicePort.getAllPermissions();
   }
 
 

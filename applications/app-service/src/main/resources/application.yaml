@@ -38,6 +38,7 @@ routes:
   paths:
     permission:
       create: "api/v1/permissions"
+      allPermissions: "api/v1/permissions"
 
 adapters:
   r2dbc:
@@ -47,3 +48,13 @@ adapters:
     schema: ${DB_SCHEMA}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
+
+springdoc:
+  swagger-ui:
+    path: /api/docs
+  version: 1.0.0
+  title: Authentication Service API
+  description: API documentation for the Authentication Service
+  license:
+    name: GNU GENERAL PUBLIC LICENSE
+    url: https://www.gnu.org/licenses/gpl-3.0.txt

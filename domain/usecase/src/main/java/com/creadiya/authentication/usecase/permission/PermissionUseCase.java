@@ -4,6 +4,9 @@ import com.creadiya.authentication.model.permission.Permission;
 import com.creadiya.authentication.model.permission.spi.IPermissionRepository;
 
 import com.creadiya.authentication.usecase.permission.api.IPermissionServicePort;
+import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
+import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;
+import com.creadiya.authentication.usecase.permission.validation.PermissionValidator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -15,11 +18,10 @@ public class PermissionUseCase implements IPermissionServicePort {
     }
 
     public Mono<Permission> savePermission(Permission permission) {
-      if (permission.getResource() == null || permission.getResource().isBlank()
-          ||  permission.getAction() == null || permission.getAction().isBlank()) {
-        return Mono.error(new IllegalArgumentException("Required fields are missing"));
-      }
-        return permissionRepository.save(permission);
+      return PermissionValidator.validateResource(permission)
+          .then(PermissionValidator.validateAction(permission))
+          .then(checkPermissionExists(permission))
+          .then(permissionRepository.save(permission));
     }
 
     public Mono<Permission> getPermissionById(Long id) {
@@ -28,5 +30,15 @@ public class PermissionUseCase implements IPermissionServicePort {
 
     public Flux<Permission> getAllPermissions() {
         return permissionRepository.findAll();
+    }
+
+    private Mono<Void> checkPermissionExists(Permission permission) {
+        return permissionRepository.findByResourceAndAction(permission.getResource(), permission.getAction())
+          .flatMap(exist -> {
+            if (Boolean.TRUE.equals(exist)) {
+              return Mono.error(new BusinessException(TechnicalMessage.PERMISSION_ALREADY_EXISTS));
+            }
+            return Mono.empty();
+          });
     }
 }

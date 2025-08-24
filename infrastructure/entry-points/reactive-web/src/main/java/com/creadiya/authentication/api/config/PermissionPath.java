@@ -9,4 +9,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "routes.paths.permission")
 public class PermissionPath {
   private String create;
+  private String allPermissions;
 }
