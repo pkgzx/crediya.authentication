@@ -34,19 +34,7 @@ public class RoleHandler {
       .map(roleMapper::toModel)
       .flatMap(roleServicePort::saveRole)
       .doOnSuccess(role -> log.info("Role registered successfully"))
-      .flatMap(savedRole -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.just(savedRole), Role.class))
-      .onErrorResume(BusinessException.class,
-        ex -> ErrorBuilder.<Role>buildErrorResponse(HttpStatus.resolve(ex.getTechnicalMessage().getCode()),
-          List.of(ErrorDto.builder().message(ex.getMessage()).build())))
-      .onErrorResume(ex -> {
-        log.error("Unexpected error occurred", ex);
-        return ErrorBuilder.<Role>buildErrorResponse(
-          HttpStatus.INTERNAL_SERVER_ERROR,
-          List.of(ErrorDto.builder()
-            .code(TechnicalMessage.INTERNAL_ERROR.getCode())
-            .message(TechnicalMessage.INTERNAL_ERROR.getMessage())
-            .build()));
-      });
+      .flatMap(savedRole -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.just(savedRole), Role.class));
   }
 
   public Mono<ServerResponse> getAllRoles() {
@@ -78,19 +66,6 @@ public class RoleHandler {
       .doOnSuccess(role -> log.info("Role updated successfully"))
       .flatMap(updatedRole -> ServerResponse.ok()
         .contentType(MediaType.APPLICATION_JSON)
-        .body(Mono.just(updatedRole), Role.class))
-      .onErrorResume(BusinessException.class,
-        ex -> ErrorBuilder.<Role>buildErrorResponse(
-          HttpStatus.resolve(ex.getTechnicalMessage().getCode()),
-          List.of(ErrorDto.builder().message(ex.getMessage()).build())))
-      .onErrorResume(ex -> {
-        log.error("Unexpected error occurred", ex);
-        return ErrorBuilder.<Role>buildErrorResponse(
-          HttpStatus.INTERNAL_SERVER_ERROR,
-          List.of(ErrorDto.builder()
-            .code(TechnicalMessage.INTERNAL_ERROR.getCode())
-            .message(TechnicalMessage.INTERNAL_ERROR.getMessage())
-            .build()));
-      });
+        .body(Mono.just(updatedRole), Role.class));
   }
 }

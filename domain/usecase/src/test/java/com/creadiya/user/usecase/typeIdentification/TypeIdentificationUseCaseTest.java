@@ -1,7 +1,7 @@
 package com.creadiya.user.usecase.typeIdentification;
 
-import com.creadiya.authentication.model.typeidentification.TypeIdentification;
-import com.creadiya.authentication.model.typeidentification.spi.ITypeIdentificationRepository;
+import com.creadiya.authentication.model.typeIdentification.TypeIdentification;
+import com.creadiya.authentication.model.typeIdentification.spi.ITypeIdentificationRepository;
 import com.creadiya.authentication.usecase.permission.cases.TypeIdentificationUseCase;
 import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
 import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;

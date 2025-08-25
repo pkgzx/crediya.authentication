@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import com.creadiya.authentication.model.role.Role;
-import com.creadiya.authentication.model.typeidentification.TypeIdentification;
+import com.creadiya.authentication.model.typeIdentification.TypeIdentification;
 
 public class User {
   private UUID id;
@@ -67,7 +67,7 @@ public class User {
     return typeIdentification;
   }
 
-  public void setTypeIdentifaction(TypeIdentification typeIdentification) {
+  public void setTypeIdentification(TypeIdentification typeIdentification) {
     this.typeIdentification = typeIdentification;
   }
 

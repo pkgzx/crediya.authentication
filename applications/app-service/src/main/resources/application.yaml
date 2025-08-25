@@ -40,6 +40,8 @@ logging:
   level:
     root: INFO
     com.crediya.authentication: TRACE
+#    org.springframework.r2dbc.core: DEBUG
+#    io.r2dbc.postgresql: DEBUG
 
 routes:
   paths:
@@ -53,6 +55,8 @@ routes:
     type-identification:
       list: "api/v1/type-identifications"
       create: "api/v1/type-identifications"
+    user:
+        create: "api/v1/users"
 
 adapters:
   r2dbc:
@@ -72,3 +76,7 @@ springdoc:
   license:
     name: GNU GENERAL PUBLIC LICENSE
     url: https://www.gnu.org/licenses/gpl-3.0.txt
+
+currency:
+  api:
+    base-url: "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/cop.json"

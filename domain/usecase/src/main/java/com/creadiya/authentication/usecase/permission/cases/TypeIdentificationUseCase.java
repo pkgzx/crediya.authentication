@@ -1,7 +1,7 @@
 package com.creadiya.authentication.usecase.permission.cases;
 
-import com.creadiya.authentication.model.typeidentification.TypeIdentification;
-import com.creadiya.authentication.model.typeidentification.spi.ITypeIdentificationRepository;
+import com.creadiya.authentication.model.typeIdentification.TypeIdentification;
+import com.creadiya.authentication.model.typeIdentification.spi.ITypeIdentificationRepository;
 import com.creadiya.authentication.usecase.permission.api.ITypeIdentificationServicePort;
 import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
 import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;
@@ -20,21 +20,20 @@ public class TypeIdentificationUseCase implements ITypeIdentificationServicePort
   @Override
   public Mono<TypeIdentification> createTypeIdentification(TypeIdentification typeIdentifaction) {
     return TypeIdentificationValidator.validateName(typeIdentifaction)
-      .doOnSuccess(v -> System.out.println("validateName OK: " + v))
-      .doOnError(e -> System.out.println("validateName ERROR: " + e))
       .then(checkTypeIdentificationExists(typeIdentifaction)
-        .doOnSuccess(v -> System.out.println("checkTypeIdentificationExists OK: " + v))
-        .doOnError(e -> System.out.println("checkTypeIdentificationExists ERROR: " + e))
       )
       .then(typeIdentificationRepository.save(typeIdentifaction)
-        .doOnSuccess(v -> System.out.println("save OK: " + v))
-        .doOnError(e -> System.out.println("save ERROR: " + e))
       );
   }
 
   @Override
   public Flux<TypeIdentification> getAllTypeIdentifications() {
     return typeIdentificationRepository.findAll();
+  }
+
+  @Override
+  public Mono<TypeIdentification> getTypeIdentificationById(Integer id) {
+    return typeIdentificationRepository.findById(id);
   }
 
   private Mono<Void> checkTypeIdentificationExists(TypeIdentification typeIdentifaction) {

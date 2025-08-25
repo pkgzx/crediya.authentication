@@ -1,6 +1,6 @@
 package com.creadiya.authentication.usecase.permission.validation;
 
-import com.creadiya.authentication.model.typeidentification.TypeIdentification;
+import com.creadiya.authentication.model.typeIdentification.TypeIdentification;
 import com.creadiya.authentication.usecase.permission.enums.IntegerConstants;
 import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
 import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;

@@ -1,6 +1,6 @@
 package com.creadiya.authentication.r2dbc.mapper;
 
-import com.creadiya.authentication.model.typeidentification.TypeIdentification;
+import com.creadiya.authentication.model.typeIdentification.TypeIdentification;
 import com.creadiya.authentication.r2dbc.entity.TypeIdentificationEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

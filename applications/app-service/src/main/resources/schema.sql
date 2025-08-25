@@ -35,11 +35,8 @@ CREATE TABLE IF NOT EXISTS "User" (
   birthday DATE,
   roleId BIGINT REFERENCES "Role"(id),
   baseSalaryCurrency VARCHAR(10),
-  baseSalaryValue NUMERIC(19,2)
+  baseSalaryValue NUMERIC(19,2),
+  typeIdentificationId BIGINT NOT NULL REFERENCES "TypeIdentification"(id)
 );
 
-CREATE TABLE IF NOT EXISTS "UserTypeIdentification" (
-    id BIGSERIAL PRIMARY KEY,
-    userId VARCHAR(200) NOT NULL REFERENCES "User"(id) ON DELETE CASCADE,
-    typeIdentificationId BIGINT NOT NULL REFERENCES "TypeIdentification"(id) ON DELETE CASCADE
-);
+

@@ -57,6 +57,11 @@ public class RoleUseCase implements IRoleServicePort {
       .then(roleRepository.update(role));
   }
 
+  @Override
+  public Mono<Role> getRoleById(Long id) {
+    return roleRepository.findById(id);
+  }
+
   private Mono<Void> checkRoleExists(Role role) {
     return roleRepository.findByName(role.getName())
       .flatMap(exist -> {

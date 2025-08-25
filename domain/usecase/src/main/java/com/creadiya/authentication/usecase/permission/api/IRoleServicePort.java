@@ -8,4 +8,5 @@ public interface IRoleServicePort {
   Mono<Role> saveRole(Role role);
   Flux<Role> getAllRoles();
   Mono<Role> updateRole(Role role);
+  Mono<Role> getRoleById(Long id);
 }

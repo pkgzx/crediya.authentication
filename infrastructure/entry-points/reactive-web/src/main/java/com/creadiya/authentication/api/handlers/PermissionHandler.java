@@ -33,19 +33,7 @@ public class PermissionHandler {
       .map(permissionMapper::toModel)
       .flatMap(permissionServicePort::savePermission)
       .doOnSuccess(franchise -> log.info("Franchise registered successfully"))
-      .flatMap(savedPermission -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.just(savedPermission), Permission.class))
-      .onErrorResume(BusinessException.class,
-        ex -> ErrorBuilder.<Permission>buildErrorResponse(HttpStatus.resolve(ex.getTechnicalMessage().getCode()),
-        List.of(ErrorDto.builder().message(ex.getMessage()).build())))
-        .onErrorResume(ex -> {
-      log.error("Unexpected error occurred", ex);
-      return ErrorBuilder.<Permission>buildErrorResponse(
-        HttpStatus.INTERNAL_SERVER_ERROR,
-        List.of(ErrorDto.builder()
-          .code(TechnicalMessage.INTERNAL_ERROR.getCode())
-          .message(TechnicalMessage.INTERNAL_ERROR.getMessage())
-          .build()));
-    });
+      .flatMap(savedPermission -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.just(savedPermission), Permission.class));
   }
 
   public Mono<ServerResponse> getAllPermissions() {

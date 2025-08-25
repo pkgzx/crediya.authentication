@@ -1,21 +1,21 @@
-package com.creadiya.authentication.model.typeIdentifaction;
+package com.creadiya.authentication.model.typeIdentification;
 
 
 import java.util.Objects;
 
-public class TypeIdentifaction {
+public class TypeIdentification {
     private Long id;
     private String name;
 
-  public TypeIdentifaction(Long id, String name) {
+  public TypeIdentification(Long id, String name) {
     this.id = id;
     this.name = name;
   }
 
-  public TypeIdentifaction() {
+  public TypeIdentification() {
   }
 
-  private TypeIdentifaction(Builder builder) {
+  private TypeIdentification(Builder builder) {
     setId(builder.id);
     setName(builder.name);
   }
@@ -39,7 +39,7 @@ public class TypeIdentifaction {
   @Override
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
-    TypeIdentifaction that = (TypeIdentifaction) o;
+    TypeIdentification that = (TypeIdentification) o;
     return Objects.equals(getId(), that.getId()) && Objects.equals(getName(), that.getName());
   }
 
@@ -58,7 +58,7 @@ public class TypeIdentifaction {
 
 
   /**
-   * {@code TypeIdentifaction} builder static inner class.
+   * {@code TypeIdentification} builder static inner class.
    */
   public static final class Builder {
     private Long id;
@@ -94,8 +94,8 @@ public class TypeIdentifaction {
      *
      * @return a {@code TypeIdentifaction} built with parameters of this {@code TypeIdentifaction.Builder}
      */
-    public TypeIdentifaction build() {
-      return new TypeIdentifaction(this);
+    public TypeIdentification build() {
+      return new TypeIdentification(this);
     }
   }
 }

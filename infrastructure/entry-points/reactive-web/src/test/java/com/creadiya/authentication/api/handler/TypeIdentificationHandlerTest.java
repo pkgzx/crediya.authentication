@@ -3,7 +3,7 @@ package com.creadiya.authentication.api.handler;
 import com.creadiya.authentication.api.dto.CreateTypeIdentificationDto;
 import com.creadiya.authentication.api.handlers.TypeIdentificationHandler;
 import com.creadiya.authentication.api.mapper.ITypeIdentificationMapper;
-import com.creadiya.authentication.model.typeidentification.TypeIdentification;
+import com.creadiya.authentication.model.typeIdentification.TypeIdentification;
 import com.creadiya.authentication.usecase.permission.api.ITypeIdentificationServicePort;
 import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;
 import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;

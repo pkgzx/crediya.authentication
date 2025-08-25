@@ -1,7 +1,7 @@
 package com.creadiya.authentication.r2dbc.adapter;
 
-import com.creadiya.authentication.model.typeidentification.TypeIdentification;
-import com.creadiya.authentication.model.typeidentification.spi.ITypeIdentificationRepository;
+import com.creadiya.authentication.model.typeIdentification.TypeIdentification;
+import com.creadiya.authentication.model.typeIdentification.spi.ITypeIdentificationRepository;
 import com.creadiya.authentication.r2dbc.mapper.ITypeIdentificationPersistenceMapper;
 import com.creadiya.authentication.r2dbc.repository.ITypeIdentificationPostgresRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class TypeIdentificationPostgresPersistenceAdapter implements ITypeIdenti
   @Override
   public Mono<TypeIdentification> save(TypeIdentification typeIdentifaction) {
     return repository.save(mapper.toEntity(typeIdentifaction))
-      .doOnNext(saved -> System.out.println("TypeIdentification saved with id: " + saved.getId()))
+      .doOnNext(saved -> log.info("TypeIdentification saved with id: {}", saved.getId()))
       .map(mapper::toModel)
       .as(transactionalOperator::transactional);
   }
@@ -36,5 +36,12 @@ public class TypeIdentificationPostgresPersistenceAdapter implements ITypeIdenti
   public Mono<TypeIdentification> findByName(String name) {
     return repository.findByName(name)
       .map(mapper::toModel);
+  }
+
+  @Override
+  public Mono<TypeIdentification> findById(Integer id) {
+    return repository.findById(id)
+      .map(mapper::toModel)
+      .as(transactionalOperator::transactional);
   }
 }
