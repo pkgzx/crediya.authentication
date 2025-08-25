@@ -7,4 +7,5 @@ import reactor.core.publisher.Mono;
 
 public interface IRolePostgresRepository extends ReactiveCrudRepository<RoleEntity, Long>, ReactiveQueryByExampleExecutor<RoleEntity> {
   Mono<RoleEntity> findByName(String name);
+  Mono<RoleEntity> findByNameIgnoreCase(String name);
 }

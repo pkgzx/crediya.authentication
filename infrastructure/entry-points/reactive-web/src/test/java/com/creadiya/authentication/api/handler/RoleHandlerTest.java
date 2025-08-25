@@ -67,9 +67,10 @@ class RoleHandlerTest {
 
     Mockito.when(roleServicePort.getAllRoles()).thenReturn(Flux.just(r1, r2));
 
-    StepVerifier.create(roleHandler.getAllRoles())
-      .expectNext(r1)
-      .expectNext(r2)
+    Mono<ServerResponse> responseMono = roleHandler.getAllRoles();
+
+    StepVerifier.create(responseMono)
+      .expectNextMatches(response -> response.statusCode().is2xxSuccessful())
       .verifyComplete();
   }
 }

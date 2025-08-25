@@ -6,9 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "routes.paths.role")
-public class RolePath {
+@ConfigurationProperties(prefix = "routes.paths.type-identification")
+public class TypeIdentificationPath {
   private String create;
   private String list;
-  private String update;
 }

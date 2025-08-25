@@ -58,9 +58,10 @@ class PermissionHandlerTest {
 
     Mockito.when(permissionServicePort.getAllPermissions()).thenReturn(Flux.just(p1, p2));
 
-    StepVerifier.create(permissionHandler.getAllPermissions())
-      .expectNext(p1)
-      .expectNext(p2)
+    Mono<ServerResponse> responseMono = permissionHandler.getAllPermissions();
+
+    StepVerifier.create(responseMono)
+      .expectNextMatches(response -> response.statusCode().is2xxSuccessful())
       .verifyComplete();
   }
 }

@@ -2,6 +2,7 @@ package com.creadiya.authentication.api.handlers;
 
 import com.creadiya.authentication.api.dto.CreateRoleDto;
 import com.creadiya.authentication.api.dto.ErrorDto;
+import com.creadiya.authentication.api.dto.UpdateRoleDto;
 import com.creadiya.authentication.api.mapper.IRoleMapper;
 import com.creadiya.authentication.api.util.ErrorBuilder;
 import com.creadiya.authentication.model.role.Role;
@@ -48,7 +49,48 @@ public class RoleHandler {
       });
   }
 
-  public Flux<Role> getAllRoles() {
-    return roleServicePort.getAllRoles();
+  public Mono<ServerResponse> getAllRoles() {
+    return ServerResponse.ok().body(roleServicePort.getAllRoles(), Object.class);
+  }
+
+  public Mono<ServerResponse> updateRole(ServerRequest serverRequest) {
+    String idParam = serverRequest.pathVariable("id");
+    Long roleId;
+    try {
+      roleId = Long.valueOf(idParam);
+    } catch (NumberFormatException ex) {
+      log.error("Invalid role id format: {}", idParam);
+      return ErrorBuilder.<Role>buildErrorResponse(
+        HttpStatus.BAD_REQUEST,
+        List.of(ErrorDto.builder()
+          .code(TechnicalMessage.INVALID_PARAM.getCode())
+          .message(TechnicalMessage.INVALID_PARAM.getMessage())
+          .build()));
+    }
+
+    return serverRequest.bodyToMono(UpdateRoleDto.class)
+      .switchIfEmpty(Mono.error(new BusinessException(TechnicalMessage.REQUEST_BODY_EMPTY)))
+      .map(dto -> roleMapper.toModel(dto, Integer.valueOf(roleId.toString())))
+      .flatMap(role -> {
+        role.setId(roleId);
+        return roleServicePort.updateRole(role);
+      })
+      .doOnSuccess(role -> log.info("Role updated successfully"))
+      .flatMap(updatedRole -> ServerResponse.ok()
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(Mono.just(updatedRole), Role.class))
+      .onErrorResume(BusinessException.class,
+        ex -> ErrorBuilder.<Role>buildErrorResponse(
+          HttpStatus.resolve(ex.getTechnicalMessage().getCode()),
+          List.of(ErrorDto.builder().message(ex.getMessage()).build())))
+      .onErrorResume(ex -> {
+        log.error("Unexpected error occurred", ex);
+        return ErrorBuilder.<Role>buildErrorResponse(
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          List.of(ErrorDto.builder()
+            .code(TechnicalMessage.INTERNAL_ERROR.getCode())
+            .message(TechnicalMessage.INTERNAL_ERROR.getMessage())
+            .build()));
+      });
   }
 }

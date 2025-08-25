@@ -10,7 +10,11 @@ public enum TechnicalMessage {
   INVALID_ROLE_NAME(400, "Invalid name. Must not be empty and max 50 chars.", "name"),
   INVALID_ROLE_DESCRIPTION(400, "Invalid description. Max 255 chars.", "description"),
   PERMISSION_NOT_FOUND(404, "Permission not found.", "id"),
-  ROLE_ALREADY_EXISTS(409, "Role already exists.", "name")
+  ROLE_ALREADY_EXISTS(409, "Role already exists.", "name"),
+  ROLE_NOT_FOUND(404, "Role not found.", "id"),
+  INVALID_PARAM(400, "Invalid param", "param"),
+  TYPE_IDENTIFICATION_ALREADY_EXISTS(409, "Type Identification already exists.", "name"),
+  INVALID_TYPE_IDENTIFICATION_NAME(400, "Invalid name. Must not be empty and max 50 chars.", "name")
   ;
 
 

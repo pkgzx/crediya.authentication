@@ -48,11 +48,9 @@ public class PermissionHandler {
     });
   }
 
-  public Flux<Permission> getAllPermissions() {
-    return permissionServicePort.getAllPermissions();
+  public Mono<ServerResponse> getAllPermissions() {
+    return ServerResponse.ok().body(permissionServicePort.getAllPermissions().collectList(), Object.class);
   }
-
-
 
 
 }

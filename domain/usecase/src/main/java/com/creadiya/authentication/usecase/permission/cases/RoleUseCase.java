@@ -33,6 +33,30 @@ public class RoleUseCase implements IRoleServicePort {
     return roleRepository.findAll();
   }
 
+  @Override
+  public Mono<Role> updateRole(Role role) {
+    return RoleValidator.validateName(role)
+      .then(RoleValidator.validateDescription(role))
+      .then(roleRepository.findById(role.getId())
+        .flatMap(exist -> {
+          if (exist == null) {
+            return Mono.error(new BusinessException(TechnicalMessage.ROLE_NOT_FOUND));
+          }
+          return Mono.empty();
+        }))
+      .then(
+        roleRepository.findByNameExact(role.getName())
+          .flatMap(exist -> {
+            if (exist != null && !exist.getId().equals(role.getId())) {
+              return Mono.error(new BusinessException(TechnicalMessage.ROLE_ALREADY_EXISTS));
+            }
+            return Mono.empty();
+          })
+      )
+      .then(checkPermissionsExist(role))
+      .then(roleRepository.update(role));
+  }
+
   private Mono<Void> checkRoleExists(Role role) {
     return roleRepository.findByName(role.getName())
       .flatMap(exist -> {

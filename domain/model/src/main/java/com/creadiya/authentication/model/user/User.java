@@ -5,12 +5,13 @@ import java.util.Objects;
 import java.util.UUID;
 
 import com.creadiya.authentication.model.role.Role;
-import com.creadiya.authentication.model.typeIdentifaction.TypeIdentifaction;
+import com.creadiya.authentication.model.typeidentification.TypeIdentification;
 
 public class User {
   private UUID id;
   private String name;
-  private TypeIdentifaction typeIdentifaction;
+  private String lastName;
+  private TypeIdentification typeIdentification;
   private String identification;
   private String password;
   private String email;
@@ -26,7 +27,8 @@ public class User {
   private User(Builder builder) {
     setId(builder.id);
     setName(builder.name);
-    setTypeIdentifaction(builder.typeIdentifaction);
+    setLastName(builder.lastName);
+    typeIdentification = builder.typeIdentification;
     setIdentification(builder.identification);
     setPassword(builder.password);
     setEmail(builder.email);
@@ -53,12 +55,20 @@ public class User {
     this.name = name;
   }
 
-  public TypeIdentifaction getTypeIdentifaction() {
-    return typeIdentifaction;
+  public String getLastName() {
+    return lastName;
   }
 
-  public void setTypeIdentifaction(TypeIdentifaction typeIdentifaction) {
-    this.typeIdentifaction = typeIdentifaction;
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
+
+  public TypeIdentification getTypeIdentification() {
+    return typeIdentification;
+  }
+
+  public void setTypeIdentifaction(TypeIdentification typeIdentification) {
+    this.typeIdentification = typeIdentification;
   }
 
   public String getIdentification() {
@@ -129,12 +139,12 @@ public class User {
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
     User user = (User) o;
-    return Objects.equals(getId(), user.getId()) && Objects.equals(getName(), user.getName()) && Objects.equals(getTypeIdentifaction(), user.getTypeIdentifaction()) && Objects.equals(getIdentification(), user.getIdentification()) && Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getPhone(), user.getPhone()) && Objects.equals(getAddress(), user.getAddress()) && Objects.equals(getBirthday(), user.getBirthday()) && Objects.equals(getRole(), user.getRole()) && Objects.equals(getBaseSalary(), user.getBaseSalary());
+    return Objects.equals(getId(), user.getId()) && Objects.equals(getName(), user.getName()) && Objects.equals(getLastName(), user.getLastName()) && Objects.equals(getTypeIdentification(), user.getTypeIdentification()) && Objects.equals(getIdentification(), user.getIdentification()) && Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getPhone(), user.getPhone()) && Objects.equals(getAddress(), user.getAddress()) && Objects.equals(getBirthday(), user.getBirthday()) && Objects.equals(getRole(), user.getRole()) && Objects.equals(getBaseSalary(), user.getBaseSalary());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getId(), getName(), getTypeIdentifaction(), getIdentification(), getPassword(), getEmail(), getPhone(), getAddress(), getBirthday(), getRole(), getBaseSalary());
+    return Objects.hash(getId(), getName(), getLastName(), getTypeIdentification(), getIdentification(), getPassword(), getEmail(), getPhone(), getAddress(), getBirthday(), getRole(), getBaseSalary());
   }
 
   @Override
@@ -142,7 +152,8 @@ public class User {
     return "User{" +
       "id=" + getId() +
       ", name='" + getName() + '\'' +
-      ", typeIdentifaction=" + getTypeIdentifaction() +
+      ", lastName='" + getLastName() + '\'' +
+      ", typeIdentification=" + getTypeIdentification() +
       ", identification='" + getIdentification() + '\'' +
       ", password='" + getPassword() + '\'' +
       ", email='" + getEmail() + '\'' +
@@ -161,7 +172,8 @@ public class User {
   public static final class Builder {
     private UUID id;
     private String name;
-    private TypeIdentifaction typeIdentifaction;
+    private String lastName;
+    private TypeIdentification typeIdentification;
     private String identification;
     private String password;
     private String email;
@@ -197,13 +209,24 @@ public class User {
     }
 
     /**
-     * Sets the {@code typeIdentifaction} and returns a reference to this Builder enabling method chaining.
+     * Sets the {@code lastName} and returns a reference to this Builder enabling method chaining.
      *
-     * @param typeIdentifaction the {@code typeIdentifaction} to set
+     * @param lastName the {@code lastName} to set
      * @return a reference to this Builder
      */
-    public Builder typeIdentifaction(TypeIdentifaction typeIdentifaction) {
-      this.typeIdentifaction = typeIdentifaction;
+    public Builder lastName(String lastName) {
+      this.lastName = lastName;
+      return this;
+    }
+
+    /**
+     * Sets the {@code typeIdentification} and returns a reference to this Builder enabling method chaining.
+     *
+     * @param typeIdentification the {@code typeIdentification} to set
+     * @return a reference to this Builder
+     */
+    public Builder typeIdentification(TypeIdentification typeIdentification) {
+      this.typeIdentification = typeIdentification;
       return this;
     }
 
