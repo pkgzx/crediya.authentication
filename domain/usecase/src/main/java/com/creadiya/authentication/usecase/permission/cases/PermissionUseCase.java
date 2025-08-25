@@ -1,4 +1,4 @@
-package com.creadiya.authentication.usecase.permission;
+package com.creadiya.authentication.usecase.permission.cases;
 
 import com.creadiya.authentication.model.permission.Permission;
 import com.creadiya.authentication.model.permission.spi.IPermissionRepository;
@@ -28,7 +28,13 @@ public class PermissionUseCase implements IPermissionServicePort {
         return permissionRepository.findAll();
     }
 
-    private Mono<Void> checkPermissionExists(Permission permission) {
+  @Override
+  public Mono<Permission> getPermissionById(Long id) {
+    return permissionRepository.findById(id)
+      .switchIfEmpty(Mono.error(new BusinessException(TechnicalMessage.PERMISSION_NOT_FOUND)));
+  }
+
+  private Mono<Void> checkPermissionExists(Permission permission) {
         return permissionRepository.findByResourceAndAction(permission.getResource(), permission.getAction())
           .flatMap(exist -> {
             if (Boolean.TRUE.equals(exist)) {

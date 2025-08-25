@@ -9,6 +9,7 @@ import com.creadiya.authentication.r2dbc.repository.IPermissionPostgresRepositor
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -18,12 +19,19 @@ class PermissionPostgresPersistenceAdapterTest {
   private IPermissionPostgresRepository repository;
   private IPermissionPersistenceMapper mapper;
   private PermissionPostgresPersistenceAdapter adapter;
+  private TransactionalOperator transactionalOperator;
 
   @BeforeEach
   void setUp() {
     repository = Mockito.mock(IPermissionPostgresRepository.class);
     mapper = Mockito.mock(IPermissionPersistenceMapper.class);
-    adapter = new PermissionPostgresPersistenceAdapter(repository, mapper);
+
+    transactionalOperator = Mockito.mock(TransactionalOperator.class);
+
+    Mockito.when(transactionalOperator.transactional(Mockito.any(Mono.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    Mockito.when(transactionalOperator.transactional(Mockito.any(Flux.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    adapter = new PermissionPostgresPersistenceAdapter(repository, mapper, transactionalOperator);
   }
 
   @Test

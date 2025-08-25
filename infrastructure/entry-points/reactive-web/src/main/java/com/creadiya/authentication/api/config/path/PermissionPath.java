@@ -1,4 +1,4 @@
-package com.creadiya.authentication.api.config;
+package com.creadiya.authentication.api.config.path;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,5 +9,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "routes.paths.permission")
 public class PermissionPath {
   private String create;
-  private String allPermissions;
+  private String list;
 }

@@ -7,4 +7,5 @@ import reactor.core.publisher.Mono;
 public interface IPermissionServicePort {
    Mono<Permission> savePermission(Permission permission);
    Flux<Permission> getAllPermissions();
+   Mono<Permission> getPermissionById(Long id);
 }

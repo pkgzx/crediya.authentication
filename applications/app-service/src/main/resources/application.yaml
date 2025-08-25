@@ -19,7 +19,7 @@ spring:
 #          client-id: "myclientid"
   sql:
     init:
-      mode: never
+      mode: always
 jwt:
   json-exp-roles: "/roles"
 management:
@@ -45,7 +45,10 @@ routes:
   paths:
     permission:
       create: "api/v1/permissions"
-      allPermissions: "api/v1/permissions"
+      list: "api/v1/permissions"
+    role:
+      create: "api/v1/roles"
+      list: "api/v1/roles"
 
 adapters:
   r2dbc:

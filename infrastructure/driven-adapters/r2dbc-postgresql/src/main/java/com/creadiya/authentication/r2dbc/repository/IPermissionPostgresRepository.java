@@ -9,4 +9,5 @@ public interface IPermissionPostgresRepository extends ReactiveCrudRepository<Pe
   ReactiveQueryByExampleExecutor<PermissionEntity> {
 
   Mono<PermissionEntity> findByResourceAndAction(String resource, String action);
+
 }

@@ -2,7 +2,7 @@ package com.creadiya.user.usecase.permission;
 
 import com.creadiya.authentication.model.permission.Permission;
 import com.creadiya.authentication.model.permission.spi.IPermissionRepository;
-import com.creadiya.authentication.usecase.permission.PermissionUseCase;
+import com.creadiya.authentication.usecase.permission.cases.PermissionUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

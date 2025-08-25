@@ -3,3 +3,16 @@ CREATE TABLE IF NOT EXISTS "Permission" (
     resource VARCHAR(50) NOT NULL,
     action VARCHAR(50) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS "Role" (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    description TEXT
+);
+
+CREATE TABLE IF NOT EXISTS "RolePermission" (
+    id BIGSERIAL PRIMARY KEY,
+    roleId BIGINT NOT NULL REFERENCES "Role"(id) ON DELETE CASCADE,
+    permissionId BIGINT NOT NULL REFERENCES "Permission"(id) ON DELETE CASCADE,
+    UNIQUE(roleId, permissionId)
+);

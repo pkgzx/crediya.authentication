@@ -7,6 +7,10 @@ public enum TechnicalMessage {
   INVALID_PERMISSION_ACTION(400, "Invalid action. Must not be empty and max 50 chars.", "action"),
   PERMISSION_ALREADY_EXISTS(409, "Permission already exists.", "resource, action"),
   REQUEST_BODY_EMPTY(400, "Body can't be empty.", ""),
+  INVALID_ROLE_NAME(400, "Invalid name. Must not be empty and max 50 chars.", "name"),
+  INVALID_ROLE_DESCRIPTION(400, "Invalid description. Max 255 chars.", "description"),
+  PERMISSION_NOT_FOUND(404, "Permission not found.", "id"),
+  ROLE_ALREADY_EXISTS(409, "Role already exists.", "name")
   ;
 
 
