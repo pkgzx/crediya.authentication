@@ -25,36 +25,41 @@ public class GlobalWebExceptionHandler implements HandlerFilterFunction<ServerRe
 
   @Override
   public Mono<ServerResponse> filter(
-    @NonNull
-    ServerRequest request,
-    @NonNull
-    HandlerFunction<ServerResponse> next) {
+      @NonNull ServerRequest request,
+      @NonNull HandlerFunction<ServerResponse> next) {
     return next.handle(request)
-      .onErrorResume(BusinessException.class,
-        ex -> ErrorBuilder.<Role>buildErrorResponse(HttpStatus.resolve(ex.getTechnicalMessage().getCode()),
-          List.of(ErrorDto.builder().message(ex.getMessage()).build())))
-      .onErrorResume(DateTimeParseException.class,
-        ex -> ErrorBuilder.<Role>buildErrorResponse(HttpStatus.BAD_REQUEST,
-          List.of(ErrorDto.builder()
-            .code(TechnicalMessage.DATE_FORMAT_INVALID.getCode())
-            .message(TechnicalMessage.DATE_FORMAT_INVALID.getMessage())
-            .build()))
-      )
-      .onErrorResume(ServerWebInputException.class,
-        ex -> ErrorBuilder.<Role>buildErrorResponse(HttpStatus.BAD_REQUEST,
-          List.of(ErrorDto.builder()
-            .code(TechnicalMessage.REQUEST_BODY_INVALID.getCode())
-            .message(TechnicalMessage.REQUEST_BODY_INVALID.getMessage())
-            .build()))
-      )
-      .onErrorResume(ex -> {
-        log.error("Unexpected error occurred", ex);
-        return ErrorBuilder.<Role>buildErrorResponse(
-          HttpStatus.INTERNAL_SERVER_ERROR,
-          List.of(ErrorDto.builder()
-            .code(TechnicalMessage.INTERNAL_ERROR.getCode())
-            .message(TechnicalMessage.INTERNAL_ERROR.getMessage())
-            .build()));
-      });
+        .onErrorResume(BusinessException.class, ex -> {
+          log.error("BusinessException occurred: {}", ex.getMessage());
+          return ErrorBuilder.<Role>buildErrorResponse(
+              HttpStatus.resolve(ex.getTechnicalMessage().getCode()),
+              List.of(ErrorDto.builder().message(ex.getMessage()).build()));
+        })
+        .onErrorResume(DateTimeParseException.class, ex -> {
+          log.error("DateTimeParseException occurred: {}", ex.getMessage());
+          return ErrorBuilder.<Role>buildErrorResponse(
+              HttpStatus.BAD_REQUEST,
+              List.of(ErrorDto.builder()
+                  .code(TechnicalMessage.DATE_FORMAT_INVALID.getCode())
+                  .message(TechnicalMessage.DATE_FORMAT_INVALID.getMessage())
+                  .build()));
+        })
+        .onErrorResume(ServerWebInputException.class, ex -> {
+          log.error("ServerWebInputException occurred: {}", ex.getMessage());
+          return ErrorBuilder.<Role>buildErrorResponse(
+              HttpStatus.BAD_REQUEST,
+              List.of(ErrorDto.builder()
+                  .code(TechnicalMessage.REQUEST_BODY_INVALID.getCode())
+                  .message(TechnicalMessage.REQUEST_BODY_INVALID.getMessage())
+                  .build()));
+        })
+        .onErrorResume(ex -> {
+          log.error("Unexpected error occurred: {}", ex.getMessage(), ex);
+          return ErrorBuilder.<Role>buildErrorResponse(
+              HttpStatus.INTERNAL_SERVER_ERROR,
+              List.of(ErrorDto.builder()
+                  .code(TechnicalMessage.INTERNAL_ERROR.getCode())
+                  .message(TechnicalMessage.INTERNAL_ERROR.getMessage())
+                  .build()));
+        });
   }
 }

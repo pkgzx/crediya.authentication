@@ -6,7 +6,7 @@ import com.creadiya.authentication.r2dbc.entity.RolePermissionEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", nullValueMappingStrategy = org.mapstruct.NullValueMappingStrategy.RETURN_DEFAULT)
 public interface IRolePersistenceMapper {
   @Mapping(target = "id", source = "entity.id")
   @Mapping(target = "name", source = "entity.name")

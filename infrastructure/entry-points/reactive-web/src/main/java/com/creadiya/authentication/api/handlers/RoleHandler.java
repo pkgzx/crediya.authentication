@@ -37,9 +37,19 @@ public class RoleHandler {
       .flatMap(savedRole -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.just(savedRole), Role.class));
   }
 
-  public Mono<ServerResponse> getAllRoles() {
-    return ServerResponse.ok().body(roleServicePort.getAllRoles(), Object.class);
-  }
+public Mono<ServerResponse> getAllRoles() {
+    return roleServicePort.getAllRoles()
+        .collectList()
+        .flatMap(roles -> {
+            if (roles.isEmpty()) {
+                return ServerResponse.noContent().build();
+            }
+            return ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(roles);
+        });
+
+}
 
   public Mono<ServerResponse> updateRole(ServerRequest serverRequest) {
     String idParam = serverRequest.pathVariable("id");

@@ -5,6 +5,7 @@ import com.creadiya.authentication.api.mapper.IUserMapper;
 import com.creadiya.authentication.usecase.permission.api.IUserServicePort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -22,7 +23,9 @@ public class UserHandler {
     return request.bodyToMono(CreateUserDto.class)
       .map(userMapper::toModel)
       .flatMap(userServicePort::createUser)
-      .flatMap(response -> ServerResponse.status(201).bodyValue(response));
+      .flatMap(response -> ServerResponse.status(201)
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(response));
 
   }
 }
