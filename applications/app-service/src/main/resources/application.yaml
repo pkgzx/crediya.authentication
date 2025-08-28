@@ -5,10 +5,6 @@ spring:
     name: "authentication"
   devtools:
     add-properties: false
-  h2:
-    console:
-      enabled: true
-      path: "/h2"
   profiles:
     include: null
 #  security:
@@ -57,6 +53,7 @@ routes:
       create: "api/v1/type-identifications"
     user:
         create: "api/v1/users"
+        getByEmail: "api/v1/users/email/{email}"
 
 adapters:
   r2dbc:

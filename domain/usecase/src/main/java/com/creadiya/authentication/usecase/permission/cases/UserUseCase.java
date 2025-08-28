@@ -14,7 +14,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
-public class UserUseCase implements IUserServicePort {
+public class UserUseCase  {
   private final IUserRepository userRepository;
   private final IRoleServicePort roleServicePort;
   private final ITypeIdentificationServicePort typeIdentificationServicePort;
@@ -28,7 +28,6 @@ public class UserUseCase implements IUserServicePort {
     this.userRepository = userRepository;
   }
 
-  @Override
   public Mono<User> createUser(User user) {
     return
       UserValidator.validEmail(user.getEmail())
@@ -57,12 +56,10 @@ public class UserUseCase implements IUserServicePort {
       );
   }
 
-  @Override
   public Mono<User> getUserByUsername(String username) {
     return userRepository.findByUsername(username);
   }
 
-  @Override
   public Flux<User> getAllUsers() {
     return userRepository.findAll();
   }

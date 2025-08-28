@@ -84,7 +84,7 @@ public class UseCasesConfig {
   }
 
   @Bean
-  public IUserServicePort userServicePort(IUserRepository repository, IRoleServicePort roleServicePort, ITypeIdentificationServicePort typeIdentificationServicePort) {
+  public UserUseCase userServicePort(IUserRepository repository, IRoleServicePort roleServicePort, ITypeIdentificationServicePort typeIdentificationServicePort) {
     return new UserUseCase(repository, roleServicePort, typeIdentificationServicePort, currencyConversionServicePort);
   }
 }

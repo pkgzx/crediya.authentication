@@ -35,7 +35,6 @@ El proyecto sigue los principios de [Clean Architecture](https://medium.com/banc
 ![Clean Architecture](https://miro.medium.com/max/1400/1*ZdlHz8B0-qu9Y-QO3AXR_w.png)
 
 - **Domain:** Lógica y reglas de negocio.
-- **Usecases:** Orquestación de flujos y lógica de aplicación.
 - **Infrastructure:** Adaptadores externos y utilidades.
 - **Application:** Ensamblaje, configuración y arranque.
 
@@ -43,8 +42,9 @@ El proyecto sigue los principios de [Clean Architecture](https://medium.com/banc
 
 ```
 authentication/
-├── domain/         # Modelos y entidades del negocio
-├── usecases/       # Casos de uso y lógica de aplicación
+├── domain/         # Lógica de negocio
+    ├── model/       # Modelos de dominio
+    ├── usecase/       # Casos de uso y lógica de aplicación
 ├── infrastructure/ # Adaptadores, helpers y entry points
 ├── application/    # Configuración y arranque
 └── README.md
@@ -70,8 +70,8 @@ Ensamblaje de módulos, resolución de dependencias y arranque de la aplicación
 
 ## Requisitos
 
-- Java 11+
-- Gradle 7+
+- Java 17+
+- Gradle 9+
 - (Opcional) Docker para despliegue
 
 ## Instalación
