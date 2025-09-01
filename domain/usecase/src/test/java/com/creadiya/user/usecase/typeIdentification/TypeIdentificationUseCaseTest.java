@@ -7,58 +7,66 @@ import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
 import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import static org.mockito.Mockito.*;
+
 class TypeIdentificationUseCaseTest {
 
-  private ITypeIdentificationRepository typeIdentificationRepository;
-  private TypeIdentificationUseCase typeIdentificationUseCase;
+    ITypeIdentificationRepository repository;
+    TypeIdentificationUseCase useCase;
 
-  @BeforeEach
-  void setUp() {
-    typeIdentificationRepository = Mockito.mock(ITypeIdentificationRepository.class);
-    typeIdentificationUseCase = new TypeIdentificationUseCase(typeIdentificationRepository);
-  }
+    @BeforeEach
+    void setUp() {
+        repository = mock(ITypeIdentificationRepository.class);
+        useCase = new TypeIdentificationUseCase(repository);
+    }
 
-  @Test
-  void createTypeIdentification_shouldReturnSavedTypeIdentification() {
-    TypeIdentification ti = new TypeIdentification.Builder().id(1L).name("DNI").build();
+@Test
+void checkTypeIdentificationExists_withNullExist_returnsEmptyMono() {
+    TypeIdentification type = TypeIdentification.builder().name("CC").build();
+  when(repository.findByName("CC")).thenReturn(Mono.empty());
 
-    // Java
-    Mockito.when(typeIdentificationRepository.findByName("DNI")).thenReturn(Mono.empty());
-    Mockito.when(typeIdentificationRepository.save(ti)).thenReturn(Mono.just(ti));
+    StepVerifier.create(useCase.checkTypeIdentificationExists(type))
+        .verifyComplete();
+}
 
-    StepVerifier.create(typeIdentificationUseCase.createTypeIdentification(ti))
-      .expectNext(ti)
-      .verifyComplete();
-  }
 
-  @Test
-  void createTypeIdentification_shouldThrowIfTypeIdentificationExists() {
-    TypeIdentification ti = new TypeIdentification.Builder().id(1L).name("DNI").build();
+    @Test
+    void createTypeIdentification_alreadyExists() {
+        TypeIdentification type = TypeIdentification.builder().name("CC").build();
+        when(repository.findByName("CC")).thenReturn(Mono.just(type));
 
-    Mockito.when(typeIdentificationRepository.findByName("DNI")).thenReturn(Mono.just(ti));
-    Mockito.when(typeIdentificationRepository.save(Mockito.any())).thenReturn(Mono.just(ti));
 
-    StepVerifier.create(typeIdentificationUseCase.createTypeIdentification(ti))
-      .expectErrorMatches(e -> e instanceof BusinessException &&
-        ((BusinessException) e).getTechnicalMessage() == TechnicalMessage.TYPE_IDENTIFICATION_ALREADY_EXISTS)
-      .verify();
-  }
+            StepVerifier.create(useCase.createTypeIdentification(type))
+                .expectErrorMatches(e -> e instanceof BusinessException &&
+                    ((BusinessException) e).getTechnicalMessage() == TechnicalMessage.TYPE_IDENTIFICATION_ALREADY_EXISTS)
+                .verify();
+    }
 
-  @Test
-  void getAllTypeIdentifications_shouldReturnAll() {
-    TypeIdentification ti1 = new TypeIdentification.Builder().id(1L).name("DNI").build();
-    TypeIdentification ti2 = new TypeIdentification.Builder().id(2L).name("NIE").build();
 
-    Mockito.when(typeIdentificationRepository.findAll()).thenReturn(Flux.just(ti1, ti2));
 
-    StepVerifier.create(typeIdentificationUseCase.getAllTypeIdentifications())
-      .expectNext(ti1)
-      .expectNext(ti2)
-      .verifyComplete();
-  }
+    @Test
+    void getAllTypeIdentifications_returnsFlux() {
+        TypeIdentification type1 = TypeIdentification.builder().name("CC").build();
+        TypeIdentification type2 = TypeIdentification.builder().name("TI").build();
+        when(repository.findAll()).thenReturn(Flux.just(type1, type2));
+
+        StepVerifier.create(useCase.getAllTypeIdentifications())
+            .expectNext(type1)
+            .expectNext(type2)
+            .verifyComplete();
+    }
+
+
+
+    @Test
+    void getTypeIdentificationById_notFound() {
+        when(repository.findById(1)).thenReturn(Mono.empty());
+
+        StepVerifier.create(useCase.getTypeIdentificationById(1))
+            .verifyComplete();
+    }
 }

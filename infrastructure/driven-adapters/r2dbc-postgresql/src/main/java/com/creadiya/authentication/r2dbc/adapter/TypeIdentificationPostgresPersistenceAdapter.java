@@ -21,8 +21,7 @@ public class TypeIdentificationPostgresPersistenceAdapter implements ITypeIdenti
   public Mono<TypeIdentification> save(TypeIdentification typeIdentifaction) {
     return repository.save(mapper.toEntity(typeIdentifaction))
       .doOnNext(saved -> log.info("TypeIdentification saved with id: {}", saved.getId()))
-      .map(mapper::toModel)
-      .as(transactionalOperator::transactional);
+      .map(mapper::toModel);
   }
 
   @Override
@@ -42,6 +41,6 @@ public class TypeIdentificationPostgresPersistenceAdapter implements ITypeIdenti
   public Mono<TypeIdentification> findById(Integer id) {
     return repository.findById(id)
       .map(mapper::toModel)
-      .as(transactionalOperator::transactional);
+      .switchIfEmpty(Mono.empty());
   }
 }

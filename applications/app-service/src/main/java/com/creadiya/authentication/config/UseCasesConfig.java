@@ -43,6 +43,7 @@ public class UseCasesConfig {
 
   private final ICurrencyConversionServicePort currencyConversionServicePort;
 
+
   @Bean
   public PermissionPostgresPersistenceAdapter permissionRepository(TransactionalOperator operator) {
     return new PermissionPostgresPersistenceAdapter(permissionPostgresRepository, permissionMapper, operator);

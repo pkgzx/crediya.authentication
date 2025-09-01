@@ -10,5 +10,4 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class RolePath {
   private String create;
   private String list;
-  private String update;
 }

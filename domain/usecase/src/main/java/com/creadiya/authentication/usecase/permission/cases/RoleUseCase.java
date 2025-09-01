@@ -6,7 +6,6 @@ import com.creadiya.authentication.usecase.permission.api.IPermissionServicePort
 import com.creadiya.authentication.usecase.permission.api.IRoleServicePort;
 import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
 import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;
-import com.creadiya.authentication.usecase.permission.validation.RoleValidator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -21,10 +20,8 @@ public class RoleUseCase implements IRoleServicePort {
 
   @Override
   public Mono<Role> saveRole(Role role) {
-    return RoleValidator.validateName(role)
-      .then(RoleValidator.validateDescription(role))
-      .then(checkRoleExists(role))
-      .then(checkPermissionsExist(role))
+    return checkRoleExists(role)
+      .flatMap  (v -> checkPermissionsExist(role))
       .then(roleRepository.save(role));
   }
 
@@ -33,29 +30,6 @@ public class RoleUseCase implements IRoleServicePort {
     return roleRepository.findAll();
   }
 
-  @Override
-  public Mono<Role> updateRole(Role role) {
-    return RoleValidator.validateName(role)
-      .then(RoleValidator.validateDescription(role))
-      .then(roleRepository.findById(role.getId())
-        .flatMap(exist -> {
-          if (exist == null) {
-            return Mono.error(new BusinessException(TechnicalMessage.ROLE_NOT_FOUND));
-          }
-          return Mono.empty();
-        }))
-      .then(
-        roleRepository.findByNameExact(role.getName())
-          .flatMap(exist -> {
-            if (exist != null && !exist.getId().equals(role.getId())) {
-              return Mono.error(new BusinessException(TechnicalMessage.ROLE_ALREADY_EXISTS));
-            }
-            return Mono.empty();
-          })
-      )
-      .then(checkPermissionsExist(role))
-      .then(roleRepository.update(role));
-  }
 
   @Override
   public Mono<Role> getRoleById(Long id) {
@@ -72,13 +46,14 @@ public class RoleUseCase implements IRoleServicePort {
       });
   }
 
-  private Mono<Void> checkPermissionsExist(Role role) {
+  public Mono<Void> checkPermissionsExist(Role role) {
     if (role.getPermissions() == null || role.getPermissions().isEmpty()) {
       return Mono.empty();
     }
     return Flux.fromIterable(role.getPermissions())
       .flatMap(permission -> permissionServicePort.getPermissionById(permission.getId())
         .switchIfEmpty(Mono.error(new BusinessException(TechnicalMessage.PERMISSION_NOT_FOUND))))
-      .then();
+      .then()
+      .cast(Void.class);
   }
 }

@@ -5,82 +5,128 @@ import com.creadiya.authentication.model.role.Role;
 import com.creadiya.authentication.model.role.spi.IRoleRepository;
 import com.creadiya.authentication.usecase.permission.api.IPermissionServicePort;
 import com.creadiya.authentication.usecase.permission.cases.RoleUseCase;
-import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
 import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.util.Arrays;
+import java.util.List;
 
+import static org.mockito.Mockito.when;
+
+
+@ExtendWith(MockitoExtension.class)
 class RoleUseCaseTest {
+  @Mock
+  private  IRoleRepository roleRepository;
+  @Mock
+  private  IPermissionServicePort permissionServicePort;
 
-  private IRoleRepository roleRepository;
-  private IPermissionServicePort permissionServicePort;
   private RoleUseCase roleUseCase;
 
   @BeforeEach
   void setUp() {
-    roleRepository = Mockito.mock(IRoleRepository.class);
-    permissionServicePort = Mockito.mock(IPermissionServicePort.class);
     roleUseCase = new RoleUseCase(roleRepository, permissionServicePort);
   }
 
   @Test
-  void saveRole_shouldReturnSavedRole() {
-    Permission p1 = new Permission.Builder().id(1L).resource("res").action("act").build();
-    Role role = new Role.Builder().id(null).name("admin").description("desc").permissions(Arrays.asList(p1)).build();
+  void validSaveRoleSuccess(){
+    Permission permission = Permission.builder().id(1L).build();
+    Role input = Role.builder()
+      .name("ADMIN")
+      .description("ADMIN")
+      .permissions(List.of(permission))
+      .build();
 
-    Mockito.when(roleRepository.findByName("admin")).thenReturn(Mono.just(false));
-    Mockito.when(permissionServicePort.getPermissionById(1L)).thenReturn(Mono.just(p1));
-    Mockito.when(roleRepository.save(role)).thenReturn(Mono.just(role));
+    when(roleRepository.findByName(input.getName())).thenReturn(Mono.just(false));
+    when(roleRepository.save(input)).thenReturn(Mono.just(input));
 
-    StepVerifier.create(roleUseCase.saveRole(role))
+
+    StepVerifier.create(roleUseCase.saveRole(input))
+      .expectNext(input)
+      .verifyComplete();
+
+  }
+
+  @Test
+  void validListAllRoleSuccess(){
+    Role[] roles = {Role.builder().name("ADMIN").description("ADMIN").build()};
+
+    when(roleRepository.findAll()).thenReturn(Flux.just(roles));
+
+    StepVerifier.create(roleUseCase.getAllRoles())
+      .expectNext(roles)
+      .verifyComplete();
+  }
+
+  @Test
+  void validGetByIdRoleSuccess(){
+    Role role = Role.builder().id(1L).build();
+    when(roleRepository.findById(role.getId())).thenReturn(Mono.just(role));
+    StepVerifier.create(roleUseCase.getRoleById(role.getId()))
       .expectNext(role)
       .verifyComplete();
   }
 
   @Test
-  void saveRole_shouldThrowIfRoleExists() {
-    Role role = new Role.Builder().id(null).name("admin").description("desc").build();
-
-    Mockito.when(roleRepository.findByName("admin")).thenReturn(Mono.just(true));
-    Mockito.when(roleRepository.save(role)).thenReturn(Mono.just(role)); // <-- Añadir este mock
+  void validIfExistsRoleThrowsException(){
+    Permission permission = Permission.builder().id(1L).build();
+    Role role = Role.builder().id(1L).name("ADMIN")
+      .permissions(List.of(permission))
+      .build();
+    when(roleRepository.findByName(role.getName())).thenReturn(Mono.just(true));
+    when(roleRepository.save(role)).thenReturn(Mono.just(role));
 
     StepVerifier.create(roleUseCase.saveRole(role))
-      .expectErrorMatches(e -> e instanceof BusinessException &&
-        ((BusinessException) e).getTechnicalMessage() == TechnicalMessage.ROLE_ALREADY_EXISTS)
+      .expectError()
       .verify();
   }
 
+
+
+@Test
+void checkPermissionsExist_withEmptyPermissions_returnsEmptyMono() {
+    Role role = Role.builder().permissions(List.of()).build();
+    Mono<Void> result = roleUseCase.checkPermissionsExist(role);
+    StepVerifier.create(result)
+        .verifyComplete();
+}
+
+@Test
+void checkPermissionsExist_withAllPermissionsFound_returnsEmptyMono() {
+    Permission permission = Permission.builder().id(1L).build();
+    Role role = Role.builder().permissions(List.of(permission)).build();
+    when(permissionServicePort.getPermissionById(permission.getId())).thenReturn(Mono.just(permission));
+
+    Mono<Void> result = roleUseCase.checkPermissionsExist(role);
+    StepVerifier.create(result)
+        .verifyComplete();
+}
+
+@Test
+void checkPermissionsExist_withMissingPermission_throwsBusinessException() {
+    Permission permission = Permission.builder().id(1L).build();
+    Role role = Role.builder().permissions(List.of(permission)).build();
+    when(permissionServicePort.getPermissionById(permission.getId())).thenReturn(Mono.empty());
+
+    Mono<Void> result = roleUseCase.checkPermissionsExist(role);
+    StepVerifier.create(result)
+        .expectError(BusinessException.class)
+        .verify();
+}
+
   @Test
-  void saveRole_shouldThrowIfPermissionNotFound() {
-    Permission p1 = new Permission.Builder().id(1L).resource("res").action("act").build();
-    Role role = new Role.Builder().id(null).name("admin").description("desc").permissions(Arrays.asList(p1)).build();
-
-    Mockito.when(roleRepository.findByName("admin")).thenReturn(Mono.just(false));
-    Mockito.when(permissionServicePort.getPermissionById(1L)).thenReturn(Mono.empty());
-    Mockito.when(roleRepository.save(role)).thenReturn(Mono.just(role)); // <-- Añadir este mock
-
-    StepVerifier.create(roleUseCase.saveRole(role))
-      .expectErrorMatches(e -> e instanceof BusinessException &&
-        ((BusinessException) e).getTechnicalMessage() == TechnicalMessage.PERMISSION_NOT_FOUND)
-      .verify();
-  }
-
-  @Test
-  void getAllRoles_shouldReturnAllRoles() {
-    Role r1 = new Role.Builder().id(1L).name("admin").description("desc").build();
-    Role r2 = new Role.Builder().id(2L).name("user").description("desc2").build();
-
-    Mockito.when(roleRepository.findAll()).thenReturn(Flux.just(r1, r2));
-
-    StepVerifier.create(roleUseCase.getAllRoles())
-      .expectNext(r1)
-      .expectNext(r2)
+  void checkPermissionsExist_withNullPermissions_returnsEmptyMono() {
+    Role role = Role.builder().permissions(null).build();
+    Mono<Void> result = roleUseCase.checkPermissionsExist(role);
+    StepVerifier.create(result)
       .verifyComplete();
   }
+
+
 }

@@ -25,13 +25,15 @@ public class UserPersistencePostgresAdapter implements IUserRepository {
     log.info("Saving user with id: {}", entity.getId());
     return userPostgresRepository.save(entity)
       .doOnNext(e -> log.info("User saved with id: {}", e.getId()))
-      .map(userMapper::toModel);
+      .map(userMapper::toModel)
+      .switchIfEmpty(Mono.empty());
   }
 
   @Override
   public Mono<User> findByUsername(String username) {
     return userPostgresRepository.findByEmail(username)
       .map(userMapper::toModel)
+      .switchIfEmpty(Mono.empty())
       .as(transactionalOperator::transactional);
   }
 
@@ -45,6 +47,7 @@ public class UserPersistencePostgresAdapter implements IUserRepository {
   public Mono<User> findByIdentification(String identification) {
     return userPostgresRepository.findByIdentification(identification)
       .map(userMapper::toModel)
+      .switchIfEmpty(Mono.empty())
       .as(transactionalOperator::transactional);
   }
 
@@ -52,6 +55,7 @@ public class UserPersistencePostgresAdapter implements IUserRepository {
   public Mono<User> findByPhone(String phone) {
     return userPostgresRepository.findByPhone(phone)
       .map(userMapper::toModel)
+      .switchIfEmpty(Mono.empty())
       .as(transactionalOperator::transactional);
   }
 }

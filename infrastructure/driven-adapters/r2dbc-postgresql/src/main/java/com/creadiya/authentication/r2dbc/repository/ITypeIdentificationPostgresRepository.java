@@ -7,4 +7,6 @@ import reactor.core.publisher.Mono;
 
 public interface ITypeIdentificationPostgresRepository extends ReactiveCrudRepository<TypeIdentificationEntity, Integer>, ReactiveQueryByExampleExecutor<TypeIdentificationEntity> {
   Mono<TypeIdentificationEntity> findByName(String name);
+
+
 }

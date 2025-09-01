@@ -5,7 +5,6 @@ import com.creadiya.authentication.model.user.spi.IUserRepository;
 import com.creadiya.authentication.usecase.permission.api.ICurrencyConversionServicePort;
 import com.creadiya.authentication.usecase.permission.api.IRoleServicePort;
 import com.creadiya.authentication.usecase.permission.api.ITypeIdentificationServicePort;
-import com.creadiya.authentication.usecase.permission.api.IUserServicePort;
 import com.creadiya.authentication.usecase.permission.enums.MoneyConstants;
 import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
 import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;
@@ -30,15 +29,7 @@ public class UserUseCase  {
 
   public Mono<User> createUser(User user) {
     return
-      UserValidator.validEmail(user.getEmail())
-      .then(UserValidator.validIdentification(user.getIdentification()))
-        .then(UserValidator.validName(user.getName()))
-        .then(UserValidator.validLastName(user.getLastName()))
-        .then(UserValidator.validPhone(user.getPhone()))
-        .then(UserValidator.validPassword(user.getPassword()))
-        .then(UserValidator.validateCurrency(user.getBaseSalary().getCurrency().getCurrencyCode()))
-        .then(UserValidator.validAddress(user.getAddress()))
-        .then(UserValidator.validateMinimumAge(user.getBirthday()))
+        UserValidator.validateMinimumAge(user.getBirthday())
         .then(UserValidator.validateBaseSalaryValue(user.getBaseSalary().getValue()))
         .then(checkBaseSalary(user))
         .then(Mono.defer(() -> checkUserExists(user)))
@@ -77,36 +68,24 @@ public class UserUseCase  {
       });
   }
 
-  private Mono<User> checkUserExists(User user) {
+  public Mono<User> checkUserExists(User user) {
     return userRepository.findByUsername(user.getEmail())
-      .flatMap(exist -> exist != null
-        ? Mono.error(new BusinessException(TechnicalMessage.USER_EMAIL_ALREADY_EXISTS))
-        : Mono.just(user)
+      .flatMap(exist ->Mono.error(new BusinessException(TechnicalMessage.USER_EMAIL_ALREADY_EXISTS))
       )
       .switchIfEmpty(Mono.just(user))
       .flatMap(u -> userRepository.findByIdentification(user.getIdentification())
-        .flatMap(exist -> exist != null
-          ? Mono.error(new BusinessException(TechnicalMessage.USER_IDENTIFICATION_ALREADY_EXISTS))
-          : Mono.just(user)
+        .flatMap(exist ->  Mono.error(new BusinessException(TechnicalMessage.USER_IDENTIFICATION_ALREADY_EXISTS))
         )
         .switchIfEmpty(Mono.just(user))
       )
       .flatMap(u -> userRepository.findByPhone(user.getPhone())
-        .flatMap(exist -> exist != null
-          ? Mono.error(new BusinessException(TechnicalMessage.USER_PHONE_ALREADY_EXISTS))
-          : Mono.just(user)
+        .flatMap(exist -> Mono.<User>error(new BusinessException(TechnicalMessage.USER_PHONE_ALREADY_EXISTS))
         )
         .switchIfEmpty(Mono.just(user))
       );
   }
 
-  private Mono<User> checkOtherEntities(User user) {
-    if (user.getRole() == null || user.getRole().getId() == null) {
-      return Mono.error(new BusinessException(TechnicalMessage.ROLE_NOT_FOUND));
-    }
-    if (user.getTypeIdentification() == null || user.getTypeIdentification().getId() == null) {
-      return Mono.error(new BusinessException(TechnicalMessage.TYPE_IDENTIFICATION_NOT_FOUND));
-    }
+  public Mono<User> checkOtherEntities(User user) {
 
     return roleServicePort.getRoleById(user.getRole().getId())
       .switchIfEmpty(Mono.error(new BusinessException(TechnicalMessage.ROLE_NOT_FOUND)))

@@ -5,9 +5,9 @@ import com.creadiya.authentication.model.typeIdentification.spi.ITypeIdentificat
 import com.creadiya.authentication.usecase.permission.api.ITypeIdentificationServicePort;
 import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
 import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;
-import com.creadiya.authentication.usecase.permission.validation.TypeIdentificationValidator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
 
 
 public class TypeIdentificationUseCase implements ITypeIdentificationServicePort {
@@ -19,10 +19,9 @@ public class TypeIdentificationUseCase implements ITypeIdentificationServicePort
 
   @Override
   public Mono<TypeIdentification> createTypeIdentification(TypeIdentification typeIdentifaction) {
-    return TypeIdentificationValidator.validateName(typeIdentifaction)
-      .then(checkTypeIdentificationExists(typeIdentifaction)
-      )
-      .then(typeIdentificationRepository.save(typeIdentifaction)
+    return
+      checkTypeIdentificationExists(typeIdentifaction)
+      .flatMap(v -> typeIdentificationRepository.save(typeIdentifaction)
       );
   }
 
@@ -36,12 +35,10 @@ public class TypeIdentificationUseCase implements ITypeIdentificationServicePort
     return typeIdentificationRepository.findById(id);
   }
 
-  private Mono<Void> checkTypeIdentificationExists(TypeIdentification typeIdentifaction) {
+  public Mono<Void> checkTypeIdentificationExists(TypeIdentification typeIdentifaction) {
     return typeIdentificationRepository.findByName(typeIdentifaction.getName())
-      .flatMap(exist -> exist != null
-        ? Mono.error(new BusinessException(TechnicalMessage.TYPE_IDENTIFICATION_ALREADY_EXISTS))
-        : Mono.<Void>empty()
+      .flatMap(exist -> Mono.error(new BusinessException(TechnicalMessage.TYPE_IDENTIFICATION_ALREADY_EXISTS))
       )
-      .switchIfEmpty(Mono.<Void>empty());
+      .switchIfEmpty(Mono.<Void>empty()).then();
   }
 }

@@ -10,6 +10,6 @@ import lombok.*;
 @ToString
 public class Permission {
   private Long id;
-  private String resource;
-  private String action;
+  private String resource; // user
+  private String action;  // create
 }

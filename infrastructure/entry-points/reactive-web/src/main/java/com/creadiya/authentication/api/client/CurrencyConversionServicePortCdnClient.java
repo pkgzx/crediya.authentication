@@ -37,7 +37,7 @@ public class CurrencyConversionServicePortCdnClient implements ICurrencyConversi
   }
 
 
-  private static class CurrencyApiResponse {
+  public static class CurrencyApiResponse {
     private java.util.Map<String, BigDecimal> cop;
 
     public BigDecimal getRateForCurrency(String currency) {

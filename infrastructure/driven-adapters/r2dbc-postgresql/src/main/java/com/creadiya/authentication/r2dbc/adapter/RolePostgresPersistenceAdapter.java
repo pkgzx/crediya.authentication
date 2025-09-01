@@ -67,38 +67,7 @@ public class RolePostgresPersistenceAdapter implements IRoleRepository {
       .defaultIfEmpty(false);
   }
 
-  @Override
-  public Mono<Role> findByNameExact(String name) {
-    return rolePostgresRepository.findByNameIgnoreCase(name)
-      .map(roleMapper::toModel);
-  }
 
-
-  @Override
-  public Mono<Role> update(Role role) {
-    return rolePostgresRepository.save(roleMapper.toEntity(role))
-      .doOnNext(e -> log.info("Role updated with id: {}", e.getId()))
-      .map(roleMapper::toModel)
-      .flatMap(updatedRole -> {
-        if (role.getPermissions() != null) {
-          return rolePermissionPostgresRepository.deleteAllByRoleId(updatedRole.getId())
-            .thenMany(Flux.fromIterable(role.getPermissions()))
-            .flatMap(permission -> {
-              RolePermissionEntity rolePermissionEntity = roleMapper.toRolePermissionEntity(updatedRole.getId(), permission.getId());
-              return rolePermissionPostgresRepository.save(rolePermissionEntity);
-            })
-            .thenMany(rolePermissionPostgresRepository.findAllByRoleId(updatedRole.getId()))
-            .flatMap(rolePermissionEntity -> permissionAdapter.findById(rolePermissionEntity.getPermissionId()))
-            .collectList()
-            .map(permissions -> {
-              updatedRole.setPermissions(permissions);
-              return updatedRole;
-            });
-        }
-        return Mono.just(updatedRole);
-      }
-    ).as(transactionalOperator::transactional);
-  }
 
   @Override
   public Mono<Role> findById(Long id) {

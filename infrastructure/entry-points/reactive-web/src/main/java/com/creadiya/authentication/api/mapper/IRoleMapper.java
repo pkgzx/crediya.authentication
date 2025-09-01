@@ -1,7 +1,6 @@
 package com.creadiya.authentication.api.mapper;
 
 import com.creadiya.authentication.api.dto.CreateRoleDto;
-import com.creadiya.authentication.api.dto.UpdateRoleDto;
 import com.creadiya.authentication.model.permission.Permission;
 import com.creadiya.authentication.model.role.Role;
 import org.mapstruct.*;
@@ -15,9 +14,6 @@ public interface IRoleMapper {
     @Mapping(target = "permissions", expression = "java(toPermissionList(dto.getPermissionIds()))")
     Role toModel(CreateRoleDto dto);
 
-    @Mapping(target = "id", expression = "java(Long.valueOf(id))")
-    @Mapping(target = "permissions", expression = "java(toPermissionList(dto.getPermissionIds()))")
-    Role toModel(UpdateRoleDto dto, Integer id);
 
     default List<Permission> toPermissionList(List<Integer> permissionIds) {
         if (permissionIds == null) {

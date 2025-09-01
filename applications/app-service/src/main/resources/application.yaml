@@ -47,7 +47,6 @@ routes:
     role:
       create: "api/v1/roles"
       list: "api/v1/roles"
-      update: "api/v1/roles/{id}"
     type-identification:
       list: "api/v1/type-identifications"
       create: "api/v1/type-identifications"

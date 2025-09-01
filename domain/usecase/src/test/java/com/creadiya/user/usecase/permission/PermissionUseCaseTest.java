@@ -1,77 +1,85 @@
 package com.creadiya.user.usecase.permission;
 
+
 import com.creadiya.authentication.model.permission.Permission;
 import com.creadiya.authentication.model.permission.spi.IPermissionRepository;
 import com.creadiya.authentication.usecase.permission.cases.PermissionUseCase;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.util.Arrays;
 
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
 class PermissionUseCaseTest {
 
+  // Mock dependencies -> PermissionRepository, PermissionValidator
+  @Mock
   private IPermissionRepository permissionRepository;
+
+
+
   private PermissionUseCase permissionUseCase;
 
   @BeforeEach
-  void setUp() {
-    permissionRepository = Mockito.mock(IPermissionRepository.class);
+   void setup(){
     permissionUseCase = new PermissionUseCase(permissionRepository);
   }
 
+
   @Test
-  void savePermission_shouldReturnSavedPermission() {
-    Permission permission = new Permission.Builder()
-      .id(null)
-      .resource("resource")
-      .action("action")
-      .build();
+   void validateSavePermissionSuccess(){
+    // Input data: {action: "read", resource: "user"} -> Permission
+    Permission input =  Permission.builder()
+                                  .action("read")
+                                  .resource("user")
+                                  .build();
 
-    Mockito.when(permissionRepository.findByResourceAndAction("resource", "action"))
-      .thenReturn(Mono.just(false));
-    Mockito.when(permissionRepository.save(permission))
-      .thenReturn(Mono.just(permission));
+    Permission output = Permission.builder()
+                                  .id(1L)
+                                  .action("read")
+                                  .resource("user")
+                                  .build();
 
-    StepVerifier.create(permissionUseCase.savePermission(permission))
-      .expectNext(permission)
+
+    // Mock called methods
+    when(permissionRepository.findByResourceAndAction(input.getResource(), input.getAction())).thenReturn(Mono.just(false));
+    when(permissionRepository.save(input)).thenReturn(Mono.just(output));
+
+    StepVerifier.create(permissionUseCase.savePermission(input))
+      .expectNext(output)
       .verifyComplete();
+
   }
 
   @Test
-  void getAllPermissions_shouldReturnAllPermissions() {
-    Permission p1 = new Permission.Builder().id(1L).resource("res1").action("act1").build();
-    Permission p2 = new Permission.Builder().id(2L).resource("res2").action("act2").build();
+  void validateGetAllPermissionsSuccess(){
+    Permission[] output = {Permission.builder().id(1L).build(), Permission.builder().id(2L).build()};
 
-    Mockito.when(permissionRepository.findAll())
-      .thenReturn(Flux.fromIterable(Arrays.asList(p1, p2)));
+    when(permissionRepository.findAll()).thenReturn(Flux.just(output));
 
     StepVerifier.create(permissionUseCase.getAllPermissions())
-      .expectNext(p1)
-      .expectNext(p2)
+      .expectNext(output)
       .verifyComplete();
   }
 
   @Test
-  void findByResourceAndAction_shouldReturnTrueIfExists() {
-    Mockito.when(permissionRepository.findByResourceAndAction("res", "act"))
-      .thenReturn(Mono.just(true));
+  void validateGetPermissionByIdSuccess(){
+    Permission output = Permission.builder().id(1L).build();
+    Long input = 1L;
+    when(permissionRepository.findById(input)).thenReturn(Mono.just(output));
 
-    StepVerifier.create(permissionRepository.findByResourceAndAction("res", "act"))
-      .expectNext(true)
+    StepVerifier.create(permissionUseCase.getPermissionById(input))
+      .expectNext(output)
       .verifyComplete();
+
   }
 
-  @Test
-  void findByResourceAndAction_shouldReturnFalseIfNotExists() {
-    Mockito.when(permissionRepository.findByResourceAndAction("res", "act"))
-      .thenReturn(Mono.just(false));
-
-    StepVerifier.create(permissionRepository.findByResourceAndAction("res", "act"))
-      .expectNext(false)
-      .verifyComplete();
-  }
 }

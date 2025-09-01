@@ -4,6 +4,7 @@ import com.creadiya.authentication.api.dto.CreatePermissionDto;
 import com.creadiya.authentication.api.dto.ErrorDto;
 import com.creadiya.authentication.api.mapper.IPermissionMapper;
 import com.creadiya.authentication.api.util.ErrorBuilder;
+import com.creadiya.authentication.api.validation.PermissionValidator;
 import com.creadiya.authentication.model.permission.Permission;
 import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
 import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;
@@ -26,11 +27,16 @@ import java.util.List;
 public class PermissionHandler {
   private final IPermissionServicePort permissionServicePort;
   private final IPermissionMapper permissionMapper;
+  private final PermissionValidator permissionValidator;
 
   public Mono<ServerResponse> listenCreatePermission(ServerRequest serverRequest) {
     return serverRequest.bodyToMono(CreatePermissionDto.class)
       .switchIfEmpty(Mono.error(new BusinessException(TechnicalMessage.REQUEST_BODY_EMPTY)))
       .map(permissionMapper::toModel)
+      .flatMap(permission -> permissionValidator.validateResource(permission)
+                                                          .then(permissionValidator.validateAction(permission)
+                                                          .then(Mono.just(permission)))
+      )
       .flatMap(permissionServicePort::savePermission)
       .doOnSuccess(franchise -> log.info("Franchise registered successfully"))
       .flatMap(savedPermission -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.just(savedPermission), Permission.class));

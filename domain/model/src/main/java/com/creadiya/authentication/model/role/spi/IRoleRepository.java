@@ -8,7 +8,5 @@ public interface IRoleRepository {
   Mono<Role> save(Role role);
   Flux<Role> findAll();
   Mono<Boolean> findByName(String name);
-  Mono<Role>  findByNameExact(String name);
-  Mono<Role> update(Role role);
   Mono<Role> findById(Long id);
 }
