@@ -5,10 +5,12 @@ import com.creadiya.authentication.usecase.permission.enums.IntegerConstants;
 import com.creadiya.authentication.usecase.permission.enums.StringConstants;
 import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
 import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 
+@Component
 public class UserValidator {
 
   public  Mono<Void> validEmail(String email) {
