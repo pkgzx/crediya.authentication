@@ -1,4 +1,4 @@
-package com.creadiya.authentication.usecase.permission.enums;
+package com.creadiya.authentication.model.enums;
 
 public enum IntegerConstants {
   MAX_RESOURCE_LENGTH(50),

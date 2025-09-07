@@ -1,6 +1,7 @@
-package com.creadiya.authentication.usecase.permission.exceptions;
+package com.creadiya.authentication.model.exceptions;
 
-import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
+
+import com.creadiya.authentication.model.enums.TechnicalMessage;
 
 public class ProcessorException extends RuntimeException {
 

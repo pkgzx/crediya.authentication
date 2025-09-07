@@ -1,6 +1,8 @@
 package com.creadiya.authentication.config;
 
 
+import com.creadiya.authentication.jwt.JwtProvider;
+import com.creadiya.authentication.jwt.PasswordEncoder;
 import com.creadiya.authentication.model.permission.spi.IPermissionRepository;
 import com.creadiya.authentication.model.role.spi.IRoleRepository;
 import com.creadiya.authentication.model.typeIdentification.spi.ITypeIdentificationRepository;
@@ -15,6 +17,7 @@ import com.creadiya.authentication.r2dbc.mapper.IRolePersistenceMapper;
 import com.creadiya.authentication.r2dbc.mapper.ITypeIdentificationPersistenceMapper;
 import com.creadiya.authentication.r2dbc.mapper.IUserPersistenceMapper;
 import com.creadiya.authentication.r2dbc.repository.*;
+import com.creadiya.authentication.usecase.auth.AuthUseCase;
 import com.creadiya.authentication.usecase.permission.api.*;
 import com.creadiya.authentication.usecase.permission.cases.PermissionUseCase;
 import com.creadiya.authentication.usecase.permission.cases.RoleUseCase;
@@ -43,6 +46,9 @@ public class UseCasesConfig {
 
   private final ICurrencyConversionServicePort currencyConversionServicePort;
 
+  private final PasswordEncoder passwordEncoder;
+  private final JwtProvider jwtProvider;
+
 
   @Bean
   public PermissionPostgresPersistenceAdapter permissionRepository(TransactionalOperator operator) {
@@ -64,7 +70,7 @@ public class UseCasesConfig {
   }
 
   @Bean
-  public IRoleServicePort roleServicePort(IRoleRepository repository, IPermissionServicePort permissionServicePort) {
+  public RoleUseCase roleServicePort(IRoleRepository repository, IPermissionServicePort permissionServicePort) {
     return new RoleUseCase(repository, permissionServicePort);
   }
 
@@ -86,6 +92,12 @@ public class UseCasesConfig {
 
   @Bean
   public UserUseCase userServicePort(IUserRepository repository, IRoleServicePort roleServicePort, ITypeIdentificationServicePort typeIdentificationServicePort) {
-    return new UserUseCase(repository, roleServicePort, typeIdentificationServicePort, currencyConversionServicePort);
+    return new UserUseCase(repository, roleServicePort, typeIdentificationServicePort, currencyConversionServicePort, passwordEncoder);
   }
+
+  @Bean
+  public AuthUseCase authUseCase(UserUseCase userUseCase, RoleUseCase roleUseCase) {
+    return new AuthUseCase(userUseCase, jwtProvider, roleUseCase, passwordEncoder);
+  }
+
 }

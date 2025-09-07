@@ -7,8 +7,8 @@ import com.creadiya.authentication.usecase.permission.api.ICurrencyConversionSer
 import com.creadiya.authentication.usecase.permission.api.IRoleServicePort;
 import com.creadiya.authentication.usecase.permission.api.ITypeIdentificationServicePort;
 import com.creadiya.authentication.usecase.permission.cases.UserUseCase;
-import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
-import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;
+import com.creadiya.authentication.model.enums.TechnicalMessage;
+import com.creadiya.authentication.model.exceptions.BusinessException;
 import com.creadiya.authentication.model.role.Role;
 import com.creadiya.authentication.model.typeIdentification.TypeIdentification;
 import org.junit.jupiter.api.BeforeEach;

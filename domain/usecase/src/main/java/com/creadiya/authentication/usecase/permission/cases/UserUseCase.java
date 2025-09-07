@@ -1,13 +1,14 @@
 package com.creadiya.authentication.usecase.permission.cases;
 
+import com.creadiya.authentication.model.auth.gateway.IPasswordEncoder;
 import com.creadiya.authentication.model.user.User;
 import com.creadiya.authentication.model.user.spi.IUserRepository;
 import com.creadiya.authentication.usecase.permission.api.ICurrencyConversionServicePort;
 import com.creadiya.authentication.usecase.permission.api.IRoleServicePort;
 import com.creadiya.authentication.usecase.permission.api.ITypeIdentificationServicePort;
-import com.creadiya.authentication.usecase.permission.enums.MoneyConstants;
-import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
-import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;
+import com.creadiya.authentication.model.enums.MoneyConstants;
+import com.creadiya.authentication.model.enums.TechnicalMessage;
+import com.creadiya.authentication.model.exceptions.BusinessException;
 import com.creadiya.authentication.usecase.permission.validation.UserValidator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -18,13 +19,15 @@ public class UserUseCase  {
   private final IRoleServicePort roleServicePort;
   private final ITypeIdentificationServicePort typeIdentificationServicePort;
   private final ICurrencyConversionServicePort currencyConversion;
+  private final IPasswordEncoder passwordEncoder;
 
   public UserUseCase(IUserRepository userRepository, IRoleServicePort roleServicePort,
-                     ITypeIdentificationServicePort typeIdentificationServicePort, ICurrencyConversionServicePort currencyConversion) {
+                     ITypeIdentificationServicePort typeIdentificationServicePort, ICurrencyConversionServicePort currencyConversion, IPasswordEncoder passwordEncoder) {
     this.currencyConversion = currencyConversion;
     this.roleServicePort = roleServicePort;
     this.typeIdentificationServicePort = typeIdentificationServicePort;
     this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
   }
 
   public Mono<User> createUser(User user) {
@@ -34,7 +37,12 @@ public class UserUseCase  {
         .then(checkBaseSalary(user))
         .then(Mono.defer(() -> checkUserExists(user)))
         .then(Mono.defer(() -> checkOtherEntities(user)))
-        .then(userRepository.save(user))
+          .flatMap(userModel -> passwordEncoder.encode(user.getPassword())
+            .flatMap(hash -> {
+              userModel.setPassword(hash);
+              return userRepository.save(userModel);
+            })
+          )
       .flatMap(savedUser -> roleServicePort.getRoleById(user.getRole().getId())
         .flatMap(role -> {
           savedUser.setRole(role);

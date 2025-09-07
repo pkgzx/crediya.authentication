@@ -5,7 +5,7 @@ import com.creadiya.authentication.model.role.Role;
 import com.creadiya.authentication.model.role.spi.IRoleRepository;
 import com.creadiya.authentication.usecase.permission.api.IPermissionServicePort;
 import com.creadiya.authentication.usecase.permission.cases.RoleUseCase;
-import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;
+import com.creadiya.authentication.model.exceptions.BusinessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

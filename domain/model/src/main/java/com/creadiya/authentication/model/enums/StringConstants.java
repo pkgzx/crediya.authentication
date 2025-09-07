@@ -1,4 +1,4 @@
-package com.creadiya.authentication.usecase.permission.enums;
+package com.creadiya.authentication.model.enums;
 
 public enum StringConstants {
   DATE_PATTERN("dd/MM/yyyy"),

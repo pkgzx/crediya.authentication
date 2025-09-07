@@ -4,8 +4,8 @@ import com.creadiya.authentication.model.permission.Permission;
 import com.creadiya.authentication.model.permission.spi.IPermissionRepository;
 
 import com.creadiya.authentication.usecase.permission.api.IPermissionServicePort;
-import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
-import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;
+import com.creadiya.authentication.model.enums.TechnicalMessage;
+import com.creadiya.authentication.model.exceptions.BusinessException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

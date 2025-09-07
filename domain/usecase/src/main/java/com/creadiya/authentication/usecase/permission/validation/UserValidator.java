@@ -1,8 +1,8 @@
 package com.creadiya.authentication.usecase.permission.validation;
 
-import com.creadiya.authentication.usecase.permission.enums.IntegerConstants;
-import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
-import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;
+import com.creadiya.authentication.model.enums.IntegerConstants;
+import com.creadiya.authentication.model.enums.TechnicalMessage;
+import com.creadiya.authentication.model.exceptions.BusinessException;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;

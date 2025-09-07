@@ -4,9 +4,9 @@ import com.creadiya.authentication.api.dto.CreateBaseSalaryDto;
 import com.creadiya.authentication.api.dto.CreateUserDto;
 import com.creadiya.authentication.model.user.BaseSalary;
 import com.creadiya.authentication.model.user.User;
-import com.creadiya.authentication.usecase.permission.enums.StringConstants;
-import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
-import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;
+import com.creadiya.authentication.model.enums.StringConstants;
+import com.creadiya.authentication.model.enums.TechnicalMessage;
+import com.creadiya.authentication.model.exceptions.BusinessException;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

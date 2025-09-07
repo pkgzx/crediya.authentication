@@ -3,8 +3,8 @@ package com.creadiya.authentication.usecase.permission.cases;
 import com.creadiya.authentication.model.typeIdentification.TypeIdentification;
 import com.creadiya.authentication.model.typeIdentification.spi.ITypeIdentificationRepository;
 import com.creadiya.authentication.usecase.permission.api.ITypeIdentificationServicePort;
-import com.creadiya.authentication.usecase.permission.enums.TechnicalMessage;
-import com.creadiya.authentication.usecase.permission.exceptions.BusinessException;
+import com.creadiya.authentication.model.enums.TechnicalMessage;
+import com.creadiya.authentication.model.exceptions.BusinessException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

@@ -1,4 +1,4 @@
-package com.creadiya.authentication.usecase.permission.enums;
+package com.creadiya.authentication.model.enums;
 
 import java.math.BigDecimal;
 

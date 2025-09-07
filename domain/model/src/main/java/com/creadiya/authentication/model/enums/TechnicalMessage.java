@@ -1,4 +1,4 @@
-package com.creadiya.authentication.usecase.permission.enums;
+package com.creadiya.authentication.model.enums;
 
 public enum TechnicalMessage {
 
@@ -36,7 +36,10 @@ public enum TechnicalMessage {
   USER_IDENTIFICATION_ALREADY_EXISTS(409, "Identification already exists.", "identification"),
   USER_PHONE_ALREADY_EXISTS(409, "Phone already exists.", "phone"),
   TYPE_IDENTIFICATION_NOT_FOUND(404, "Type Identification not found.", "id"),
-  REQUEST_BODY_INVALID(400, "Request body is invalid.", "body")
+  REQUEST_BODY_INVALID(400, "Request body is invalid.", "body"),
+  INVALID_CREDENTIALS(401, "Invalid credentials.", "credentials"),
+  INVALID_AUTHENTICATION(401, "Invalid authentication.", "authentication"),
+  INVALID_TOKEN(401, "Invalid token.", "token"),
   ;
 
 
