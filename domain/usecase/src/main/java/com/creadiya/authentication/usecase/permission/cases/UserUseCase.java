@@ -59,6 +59,10 @@ public class UserUseCase  {
     return userRepository.findByUsername(username);
   }
 
+  public Mono<User> getUserById(String id) {
+    return userRepository.findById(id);
+  }
+
   public Flux<User> getAllUsers() {
     return userRepository.findAll();
   }

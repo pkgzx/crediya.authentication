@@ -53,6 +53,7 @@ routes:
     user:
         create: "api/v1/users"
         getByEmail: "api/v1/users/email/{email}"
+        getById: "/api/v1/users/id/{id}"
     auth:
       sign-in: "api/v1/auth/sign-in"
       validate-token: "api/v1/auth/validate-token"

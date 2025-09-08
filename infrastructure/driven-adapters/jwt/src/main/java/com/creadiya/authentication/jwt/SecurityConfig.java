@@ -39,7 +39,8 @@ public class SecurityConfig {
           "/webjars/swagger-ui/**",
           "/favicon.ico",
           "/v3/api-docs/swagger-config",
-          "/api/v1/users/email/*"
+          "/api/v1/users/email/*",
+          "/api/v1/users/id/*"
         ).permitAll()
         .pathMatchers(
           "/api/v1/users"

@@ -50,4 +50,14 @@ public class UserHandler {
         .bodyValue(user))
       .switchIfEmpty(ServerResponse.notFound().build());
   }
+
+  public Mono<ServerResponse> getUserById(ServerRequest request) {
+    log.info("getUserById");
+    String email = request.pathVariable("id");
+    return userCase.getUserById(email)
+      .flatMap(user -> ServerResponse.ok()
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(user))
+      .switchIfEmpty(ServerResponse.notFound().build());
+  }
 }

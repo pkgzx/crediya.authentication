@@ -58,4 +58,11 @@ public class UserPersistencePostgresAdapter implements IUserRepository {
       .switchIfEmpty(Mono.empty())
       .as(transactionalOperator::transactional);
   }
+
+  @Override
+  public Mono<User> findById(String id) {
+    return userPostgresRepository.findById(id)
+      .map(userMapper::toModel)
+      .switchIfEmpty(Mono.empty());
+  }
 }

@@ -25,6 +25,7 @@ public class JwtFilter implements WebFilter {
       path.equals("/api/docs") ||
       path.startsWith("/webjars/swagger-ui") ||
       path.startsWith("/api/v1/users/email/") ||
+      path.startsWith("/api/v1/users/id/") ||
       path.equals("/favicon.ico"))
       return chain.filter(exchange);
     String auth = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);

@@ -10,4 +10,5 @@ public interface IUserRepository {
   Flux<User> findAll();
   Mono<User> findByIdentification(String identification);
   Mono<User> findByPhone(String phone);
+  Mono<User> findById(String id);
 }
