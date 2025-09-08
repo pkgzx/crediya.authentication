@@ -81,5 +81,5 @@ currency:
     base-url: "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/cop.json"
 
 jwt:
-  secret: "YTAyMzA3ZjctODc4Ny00M2YzLWJkN2UtNTMwY2YzYzZjZWE3"
-  expiration: 3600
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
